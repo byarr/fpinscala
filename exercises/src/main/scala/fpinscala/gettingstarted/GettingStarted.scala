@@ -36,7 +36,18 @@ object MyModule {
 
   // Exercise 1: Write a function to compute the nth fibonacci number
 
-  def fib(n: Int): Int = ???
+  def fib(n: Int): Int = {
+    def fibRec(counter:Int, n_2:Int, n_1:Int) : Int = {
+      if (counter==n) n_1
+      else fibRec(counter+1, n_1, n_2 + n_1)
+    }
+    if (n==0)
+      0
+    else if (n==1)
+      1
+    else
+      fibRec(0,1,0)
+  }
 
   // This definition and `formatAbs` are very similar..
   private def formatFactorial(n: Int) = {
@@ -79,6 +90,12 @@ object AnonymousFunctions {
     println(formatResult("increment3", 7, x => x + 1))
     println(formatResult("increment4", 7, _ + 1))
     println(formatResult("increment5", 7, x => { val r = x + 1; r }))
+    println(formatResult("fib0", 0, fib))
+    println(formatResult("fib1", 1, fib))
+    println(formatResult("fib2", 2, fib))
+    println(formatResult("fib3", 3, fib))
+    println(formatResult("fib4", 4, fib))
+    println(formatResult("fib5", 5, fib))
   }
 }
 
