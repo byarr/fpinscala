@@ -78,8 +78,6 @@ object List { // `List` companion object. Contains functions for creating and wo
     }
   }
 
-
-
   def length[A](l: List[A]): Int = {
     foldRight(l, 0)( (a,b) => b+1 )
   }
@@ -95,11 +93,72 @@ object List { // `List` companion object. Contains functions for creating and wo
     foldLeft(ns, 0)((b, a) => b + a)
   }
 
-
   def map[A,B](l: List[A])(f: A => B): List[B] = {
     l match {
       case Nil => Nil
       case Cons(x, xs) => Cons(f(x), map(xs)(f))
+    }
+  }
+
+  def reverse[A](l: List[A]): List[A] = {
+    foldLeft(l, List[A]())((acc, h) => Cons(h, acc))
+  }
+
+  def foldLeft2[A,B](l: List[A], z: B)(f: (B, A) => B): B = {
+    foldRight(l, z)((a,b) => f(b, a))
+  }
+
+  def append2[A](a1: List[A], a2: List[A]): List[A] =
+    foldRight(a1, a2)((a,b) => Cons(a, b))
+
+  def concat[A](lists:List[List[A]]) : List[A] = {
+    foldLeft(lists, List[A]())((a,b) => append(a, b))
+  }
+
+  def plus1(l : List[Int]) : List[Int] = map(l)(_ + 1)
+
+  def filter[A](l : List[A])(f: (A) => Boolean) : List[A] = {
+    foldRight(l, List[A]())(
+      (a,b) => {
+        if (!f(a))
+          b
+        else
+          Cons(a, b)
+      }
+    )
+  }
+
+  def flatMap[A,B](as: List[A])(f: A => List[B]): List[B] = {
+    concat(map(as)(f))
+  }
+
+  def filter2[A](l : List[A])(f: (A) => Boolean) : List[A] = {
+    flatMap(l)(i => if (f(i)) {Cons(i, Nil)} else {Nil})
+  }
+
+  def add2l(l1: List[Int], l2: List[Int]): List[Int] = {
+    l1 match {
+      case Nil => l2 match {
+        case Nil => Nil
+        case Cons(y, ys) => Nil
+      }
+      case Cons(x, xs) => l2 match {
+        case Nil => Nil
+        case Cons(y, ys) => Cons(x+y, add2l(xs, ys))
+      }
+    }
+  }
+
+  def zipWith[A, B, C](l1: List[A], l2:List[B])(f: (A,B) => C ) : List[C] = {
+    l1 match {
+      case Nil => l2 match {
+        case Nil => Nil
+        case Cons(y, ys) => Nil
+      }
+      case Cons(x, xs) => l2 match {
+        case Nil => Nil
+        case Cons(y, ys) => Cons(f(x,y), zipWith(xs, ys)(f))
+      }
     }
   }
 
@@ -117,5 +176,19 @@ object Test {
     println("init = " + List.init(l))
     println("length = " + List.length(l))
     println("map x2 = " + List.map(l)(_*2))
+    println("rev = " + List.reverse(l))
+
+    val l1 = List(1,2,3,4)
+    val l2 = List(5,6,7,8)
+    println(List.append(l1, l2))
+    println(List.append2(l1, l2))
+
+    println(List.concat(List(l1, l2)))
+
+    println("odd = " + List.filter(l)(_%2 == 1))
+    println("fm = " + List.flatMap(List(1,2,3))(i => List(i,i)))
+    println("odd = " + List.filter2(l)(_%2 == 1))
+
+    println("add2l = " + List.add2l(List(1,2,3), List(4,5,6)))
   }
 }
