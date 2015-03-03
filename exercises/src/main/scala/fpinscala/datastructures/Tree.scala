@@ -35,5 +35,15 @@ object Tree {
     }
   }
 
+  def fold[A,B](t: Tree[A])(l: A => B)(b: (B,B) => B): B = {
+    t match {
+      case Leaf(x) => l(x)
+      case Branch(left, right) => b(fold(left)(l)(b), fold(right)(l)(b))
+    }
+  }
+
+  def size2[A](t:Tree[A]) : Int = {
+    fold(t)(_ => 1 )((a,b) => a + b)
+  }
 
 }

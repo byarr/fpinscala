@@ -15,6 +15,7 @@ class TestTree extends FlatSpec {
 
   it should "have size 7" in {
     assert(Tree.size(tree1) == 7)
+    assert(Tree.size2(tree1) == 7)
   }
 
   it should "have max 9" in {
