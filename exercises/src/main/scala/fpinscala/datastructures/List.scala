@@ -162,6 +162,17 @@ object List { // `List` companion object. Contains functions for creating and wo
     }
   }
 
+  def hasSubsequence[A](l: List[A], seq: List[A]): Boolean = {
+    l match {
+      case Nil => false
+      case Cons(x, xs) => if (startsWith(l, seq)) true else hasSubsequence(xs, seq)
+    }
+  }
+
+  def startsWith[A](l: List[A], seq: List[A]): Boolean = {
+    foldLeft(zipWith(l, seq)((a,b) => a == b), true)(_ && _)
+  }
+
 }
 
 object Test {
@@ -190,5 +201,9 @@ object Test {
     println("odd = " + List.filter2(l)(_%2 == 1))
 
     println("add2l = " + List.add2l(List(1,2,3), List(4,5,6)))
+    println("zip = " + List.zipWith(l, l1)( (a,b) => a+b ))
+
+    println("startswith "  + List.startsWith(List(1,2,3,4), List(1, 2)))
+    println("startswith "  + List.startsWith(List(1,2,3,4), List( 2, 1)))
   }
 }
