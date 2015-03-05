@@ -85,7 +85,10 @@ object Option {
    a.flatMap(a2 => b.map(b2 => f(a2,b2)))
   }
 
-  def sequence[A](a: List[Option[A]]): Option[List[A]] = sys.error("todo")
+  def sequence[A](a: List[Option[A]]): Option[List[A]] = {
+    val empty : Option[List[A]] = Some(List())
+    a.foldLeft(empty)((acc: Option[List[A]], v: Option[A]) => map2(acc, v)( (x : List[A],y : A) => x.+:(y) ) )
+  }
 
   def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = sys.error("todo")
 }
