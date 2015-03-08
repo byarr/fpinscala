@@ -87,8 +87,17 @@ object Option {
 
   def sequence[A](a: List[Option[A]]): Option[List[A]] = {
     val empty : Option[List[A]] = Some(List())
-    a.foldLeft(empty)((acc: Option[List[A]], v: Option[A]) => map2(acc, v)( (x : List[A],y : A) => x.+:(y) ) )
+    //a.foldLeft(empty)((acc: Option[List[A]], v: Option[A]) => map2(acc, v)( (x : List[A],y : A) => x.+:(y) ) )
+
+    a.foldRight(empty)((a,acc) => map2(a,acc)( (a2,acc2) =>  a2::acc2))
+
   }
 
-  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = sys.error("todo")
+  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = {
+
+    val empty : Option[List[B]] = Some(List())
+
+    a.foldRight(empty)((a,opLB) => map2(f(a), opLB)((x,xs) =>x::xs ))
+
+  }
 }
