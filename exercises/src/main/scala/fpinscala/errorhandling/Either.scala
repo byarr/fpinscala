@@ -35,9 +35,16 @@ case class Left[+E](get: E) extends Either[E,Nothing]
 case class Right[+A](get: A) extends Either[Nothing,A]
 
 object Either {
-  def traverse[E,A,B](es: List[A])(f: A => Either[E, B]): Either[E, List[B]] = sys.error("todo")
+  def traverse[E,A,B](es: List[A])(f: A => Either[E, B]): Either[E, List[B]] = {
+    val empty : Either[E, List[B]] = Right(List())
+    es.foldRight(empty)((a,opLB) => f(a).map2(opLB)((x,xs) =>x::xs ))
 
-  def sequence[E,A](es: List[Either[E,A]]): Either[E,List[A]] = sys.error("todo")
+  }
+
+  def sequence[E,A](es: List[Either[E,A]]): Either[E,List[A]] = {
+    val empty : Either[E, List[A]] = Right(List())
+    es.foldRight(empty)((a,acc) => a.map2(acc)( (a2,acc2) =>  a2::acc2))
+  }
 
   def mean(xs: IndexedSeq[Double]): Either[String, Double] = 
     if (xs.isEmpty) 
