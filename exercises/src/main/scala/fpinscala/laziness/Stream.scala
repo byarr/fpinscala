@@ -10,7 +10,10 @@ trait Stream[+A] {
     }
 
   def toList: List[A] = {
-    foldRight(List[A]())( (a,b) => a :: b  )
+    this match {
+      case Cons(h,t) => h() :: t().toList
+      case Empty => List()
+    }
   }
 
   def exists(p: A => Boolean): Boolean = 
@@ -79,6 +82,22 @@ trait Stream[+A] {
 
   // 5.7 map, filter, append, flatmap using foldRight. Part of the exercise is
   // writing your own function signatures.
+
+  def map[B](f:(A) => B) : Stream[B] = {
+    this.foldRight(empty[B])( (a,b) => cons(f(a), b))
+  }
+
+  def filter(f:(A) => Boolean): Stream[A] = {
+    this.foldRight(empty[A])( (a,b) => if (f(a)) cons(a, b) else b )
+  }
+
+  def append[B>:A](other: Stream[B]): Stream[B] = {
+    foldRight(other)((a,b) => cons(a, b))
+  }
+
+  def flatMap[B](f: (A) => Stream[B]): Stream[B] = {
+    foldRight(empty[B])((h,t) => f(h) append t)
+  }
 
   def startsWith[B](s: Stream[B]): Boolean = sys.error("todo")
 }
